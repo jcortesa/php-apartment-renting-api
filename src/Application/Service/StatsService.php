@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Application\Service;
 
-use App\Application\Model\StatsRequest;
-use App\Application\Model\StatsResponse;
+use App\Application\Command\StatsCommand;
+use App\Application\Query\StatsQuery;
 use App\Domain\Entity\BookingRequest;
 
 final class StatsService
 {
-    public function run(StatsRequest $statsRequest): StatsResponse
+    public function run(StatsCommand $statsRequest): StatsQuery
     {
         /** @var list<BookingRequest> $bookingRequestList */
         $bookingRequestList = array_map(static fn($data) => new BookingRequest(
@@ -29,7 +29,7 @@ final class StatsService
 
         [$average, $minimum, $maximum] = self::getStats($profitPerNightList);
 
-        return new StatsResponse($average, $minimum, $maximum);
+        return new StatsQuery($average, $minimum, $maximum);
     }
 
     private static function calculateProfitPerNight(int $sellingRate, int $margin, int $nights): float

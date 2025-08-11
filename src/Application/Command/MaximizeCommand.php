@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Model;
+namespace App\Application\Command;
 
-final readonly class StatsRequest
+final readonly class MaximizeCommand
 {
     /**
      * @param list<array{

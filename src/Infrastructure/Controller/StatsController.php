@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller;
 
-use App\Application\Model\StatsRequest;
+use App\Application\Command\StatsCommand;
 use App\Application\Service\StatsService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,13 +30,13 @@ final readonly class StatsController
          */
         $data = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        $statsRequest = new StatsRequest($data);
-        $statsResponse = $this->statsService->run($statsRequest);
+        $statsCommand = new StatsCommand($data);
+        $statsQuery = $this->statsService->run($statsCommand);
 
         return new JsonResponse([
-            'avg_night' => $statsResponse->average,
-            'min_night' => $statsResponse->minimum,
-            'max_night' => $statsResponse->maximum,
+            'avg_night' => $statsQuery->average,
+            'min_night' => $statsQuery->minimum,
+            'max_night' => $statsQuery->maximum,
         ]);
     }
 }

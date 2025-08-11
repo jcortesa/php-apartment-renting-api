@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller;
 
-use App\Application\Model\MaximizeRequest;
+use App\Application\Command\MaximizeCommand;
 use App\Application\Service\MaximizeService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,15 +30,15 @@ final readonly class MaximizeController
          */
         $data = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        $maximizeRequest = new MaximizeRequest($data);
-        $maximizeResponse = $this->maximizeService->run($maximizeRequest);
+        $maximizeCommand = new MaximizeCommand($data);
+        $maximizeQuery = $this->maximizeService->run($maximizeCommand);
 
         return new JsonResponse([
-            'request_ids' => $maximizeResponse->requestIds,
-            'total_profit' => $maximizeResponse->totalProfit,
-            'avg_night' => $maximizeResponse->average,
-            'min_night' => $maximizeResponse->minimum,
-            'max_night' => $maximizeResponse->maximum,
+            'request_ids' => $maximizeQuery->requestIds,
+            'total_profit' => $maximizeQuery->totalProfit,
+            'avg_night' => $maximizeQuery->average,
+            'min_night' => $maximizeQuery->minimum,
+            'max_night' => $maximizeQuery->maximum,
         ]);
     }
 }

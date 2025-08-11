@@ -2,10 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Model;
+namespace App\Application\Query;
 
-final readonly class MaximizeResponse
+final readonly class MaximizeQuery
 {
+    /**
+     * @param list<string> $requestIds
+     */
     public function __construct(
         public array $requestIds,
         public float $totalProfit,

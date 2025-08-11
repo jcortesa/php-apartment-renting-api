@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Application\Service;
 
-use App\Application\Model\MaximizeRequest;
-use App\Application\Model\MaximizeResponse;
+use App\Application\Command\MaximizeCommand;
+use App\Application\Query\MaximizeQuery;
 use App\Domain\Entity\BookingRequest;
 
 final readonly class MaximizeService
 {
-    public function run(MaximizeRequest $maximizeRequest): MaximizeResponse
+    public function run(MaximizeCommand $maximizeRequest): MaximizeQuery
     {
         /** @var list<BookingRequest> $bookingRequestList */
         $bookingRequestList = array_map(static fn($data) => new BookingRequest(
@@ -131,7 +131,7 @@ final readonly class MaximizeService
         return $validCombinations[$maxProfitKey] ?? [];
     }
 
-    private static function createMaximizeResponse(array $maxProfitCombination): MaximizeResponse
+    private static function createMaximizeResponse(array $maxProfitCombination): MaximizeQuery
     {
         $requestIds = array_map(
             static fn(BookingRequest $bookingRequest) => $bookingRequest->requestId,
@@ -145,6 +145,6 @@ final readonly class MaximizeService
 
         [$average, $minimum, $maximum] = self::getMaximizeData($maxProfitCombination);
 
-        return new MaximizeResponse($requestIds, $totalProfit, $average, $minimum, $maximum);
+        return new MaximizeQuery($requestIds, $totalProfit, $average, $minimum, $maximum);
     }
 }
