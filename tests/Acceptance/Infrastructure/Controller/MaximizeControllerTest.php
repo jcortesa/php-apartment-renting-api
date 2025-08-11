@@ -55,7 +55,10 @@ final class MaximizeControllerTest extends WebTestCase
             'max_night' => 12,
         ], JSON_THROW_ON_ERROR);
 
-        $client->request('POST', '/maximize', content: $content);
+        $client->request('POST', '/maximize', server: [
+            'HTTP_ACCEPT' => 'application/json',
+            'CONTENT_TYPE' => 'application/json',
+        ], content: $content);
 
         self::assertSame($expectedResult, $client->getResponse()->getContent());
     }

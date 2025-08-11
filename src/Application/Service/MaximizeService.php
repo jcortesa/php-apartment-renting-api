@@ -11,6 +11,7 @@ use App\Domain\Service\BookingsCombinator;
 use App\Domain\Service\ProfitCalculator;
 use App\Domain\ValueObject\DateRange;
 use App\Domain\ValueObject\Money;
+use App\Infrastructure\Controller\Model\BookingRequestDto;
 
 final readonly class MaximizeService
 {
@@ -24,12 +25,12 @@ final readonly class MaximizeService
     public function run(MaximizeCommand $maximizeCommand): MaximizeQuery
     {
         /** @var list<BookingRequest> $bookingRequestList */
-        $bookingRequestList = array_map(static fn($data) => new BookingRequest(
-            $data['request_id'],
-            new DateRange($data['check_in'], $data['nights']),
-            new Money($data['selling_rate']),
-            $data['margin']
-        ), $maximizeCommand->data);
+        $bookingRequestList = array_map(static fn(BookingRequestDto $bookingRequestDto) => new BookingRequest(
+            $bookingRequestDto->requestId,
+            new DateRange($bookingRequestDto->checkIn, $bookingRequestDto->nights),
+            new Money($bookingRequestDto->sellingRate),
+            $bookingRequestDto->margin
+        ), $maximizeCommand->bookings);
 
         $validCombinations = $this->bookingsCombinator->getValidCombinations($bookingRequestList);
         $maxProfitCombination = $this->getMaxProfitCombination($validCombinations);

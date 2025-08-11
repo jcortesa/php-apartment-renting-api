@@ -17,7 +17,10 @@ final class StatsControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('POST', '/stats', content: $content);
+        $client->request('POST', '/stats', server: [
+            'HTTP_ACCEPT' => 'application/json',
+            'CONTENT_TYPE' => 'application/json',
+        ], content: $content);
 
         self::assertSame($expectedResult, $client->getResponse()->getContent());
     }

@@ -6,8 +6,10 @@ namespace App\Infrastructure\Controller;
 
 use App\Application\Command\MaximizeCommand;
 use App\Application\Service\MaximizeService;
+use App\Infrastructure\Controller\Model\BookingRequestDto;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 
 final readonly class MaximizeController
@@ -16,21 +18,13 @@ final readonly class MaximizeController
     {
     }
 
-    #[Route('/maximize', methods: ['POST'])]
-    public function __invoke(Request $request): JsonResponse
+    #[Route('/maximize', methods: ['POST'], format: 'json')]
+    public function __invoke(
+        #[MapRequestPayload(type: BookingRequestDto::class)]
+        array $bookingRequestList
+    ): JsonResponse
     {
-        /**
-         * @var list<array{
-         *     request_id: string,
-         *     check_in: string,
-         *     nights: int,
-         *     selling_rate: int,
-         *     margin: int
-         * }> $data
-         */
-        $data = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
-
-        $maximizeCommand = new MaximizeCommand($data);
+        $maximizeCommand = new MaximizeCommand($bookingRequestList);
         $maximizeQuery = $this->maximizeService->run($maximizeCommand);
 
         return new JsonResponse([

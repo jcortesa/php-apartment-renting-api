@@ -9,6 +9,7 @@ use App\Application\Query\MaximizeQuery;
 use App\Application\Service\MaximizeService;
 use App\Domain\Service\BookingsCombinator;
 use App\Domain\Service\ProfitCalculator;
+use App\Infrastructure\Controller\Model\BookingRequestDto;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -21,9 +22,9 @@ final class MaximizeServiceTest extends TestCase
         $bookingsCombinator = new BookingsCombinator();
         $maximizeService = new MaximizeService($profitCalculator, $bookingsCombinator);
         $bookingRequests = [
-            ['request_id' => 'request-1', 'check_in' => '2023-10-01', 'nights' => 4, 'selling_rate' => 1000, 'margin' => 20],
-            ['request_id' => 'request-2', 'check_in' => '2023-10-03', 'nights' => 4, 'selling_rate' => 800, 'margin' => 15],
-            ['request_id' => 'request-3', 'check_in' => '2023-10-06', 'nights' => 3, 'selling_rate' => 600, 'margin' => 10],
+            new BookingRequestDto('request-1','2023-10-01', 4, 1000, 20),
+            new BookingRequestDto('request-2','2023-10-03', 4, 800, 15),
+            new BookingRequestDto('request-3','2023-10-06', 3, 600, 10),
         ];
 
         $expectedResult = new MaximizeQuery(['request-1', 'request-3'], 260, 20,35,50);

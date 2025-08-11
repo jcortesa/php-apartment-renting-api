@@ -8,6 +8,7 @@ use App\Application\Service\MaximizeService;
 use App\Domain\Service\BookingsCombinator;
 use App\Domain\Service\ProfitCalculator;
 use App\Infrastructure\Controller\MaximizeController;
+use App\Infrastructure\Controller\Model\BookingRequestDto;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,36 +22,35 @@ final class MaximizeControllerTest extends TestCase
         $bookingsCombinator = new BookingsCombinator();
         $maximizeService = new MaximizeService($profitCalculator, $bookingsCombinator);
         $controller = new MaximizeController($maximizeService);
-        $content = json_encode([
-            [
-                'request_id' => 'bookata_XY123',
-                'check_in' => '2020-01-01',
-                'nights' => 5,
-                'selling_rate' => 200,
-                'margin' => 20
-            ],
-            [
-                'request_id' => 'kayete_PP234',
-                'check_in' => '2020-01-04',
-                'nights' => 4,
-                'selling_rate' => 156,
-                'margin' => 5
-            ],
-            [
-                'request_id' => 'atropote_AA930',
-                'check_in' => '2020-01-04',
-                'nights' => 4,
-                'selling_rate' => 150,
-                'margin' => 6
-            ],
-            [
-                'request_id' => 'acme_AAAAA',
-                'check_in' => '2020-01-10',
-                'nights' => 4,
-                'selling_rate' => 160,
-                'margin' => 30
-            ]
-        ], JSON_THROW_ON_ERROR);
+        $bookingRequestList = [
+            new BookingRequestDto(
+                'bookata_XY123',
+                '2020-01-01',
+                5,
+                200,
+                20
+            ),
+            new BookingRequestDto(
+                'kayete_PP234',
+                '2020-01-04',
+                4,
+                156,
+                5
+            ),
+            new BookingRequestDto(
+                'atropote_AA930',
+                '2020-01-04',
+                4,
+                150,
+                6
+            ),
+            new BookingRequestDto(
+                'acme_AAAAA',
+                '2020-01-10',
+                4,
+                160,
+                30
+        )];
         $expectedResponse = json_encode([
             'request_ids' => [
                 'acme_AAAAA',
@@ -61,9 +61,8 @@ final class MaximizeControllerTest extends TestCase
             'min_night' => 8,
             'max_night' => 12,
         ], JSON_THROW_ON_ERROR);
-        $request = new Request(content: $content);
 
-        $response = $controller->__invoke($request);
+        $response = $controller->__invoke($bookingRequestList);
 
         self::assertSame($expectedResponse, $response->getContent());
     }

@@ -4,20 +4,16 @@ declare(strict_types=1);
 
 namespace App\Application\Command;
 
+use App\Infrastructure\Controller\Model\BookingRequestDto;
+
 /**
  * @codeCoverageIgnore
  */
 final readonly class StatsCommand
 {
     /**
-     * @param list<array{
-     *     request_id: string,
-     *     check_in: string,
-     *     nights: int,
-     *     selling_rate: int,
-     *     margin: int
-     * }> $data
+     * @param list<BookingRequestDto> $bookings
      */
-    public function __construct(public array $data) {
+    public function __construct(public array $bookings) {
     }
 }
