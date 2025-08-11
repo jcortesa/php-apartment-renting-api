@@ -53,8 +53,8 @@ final class MaximizeControllerTest extends TestCase
         )];
         $expectedResponse = json_encode([
             'request_ids' => [
-                'acme_AAAAA',
                 'bookata_XY123',
+                'acme_AAAAA',
             ],
             'total_profit' => 88,
             'avg_night' => 10,

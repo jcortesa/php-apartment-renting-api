@@ -15,3 +15,7 @@
 ###< phpunit/phpunit ###
 
 build/
+
+###> phpstan/phpstan ###
+phpstan.neon
+###< phpstan/phpstan ###

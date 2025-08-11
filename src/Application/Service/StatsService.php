@@ -24,7 +24,7 @@ final class StatsService
             );
         }, $statsCommand->bookings);
 
-        /** @var list<float> $profitPerNightList */
+        /** @var non-empty-list<float> $profitPerNightList */
         $profitPerNightList = array_map(
             static fn(BookingRequest $bookingRequest) => $bookingRequest->calculateProfitPerNight()->amount,
             $bookingRequestList
@@ -36,14 +36,12 @@ final class StatsService
     }
 
     /**
-     * @param list<float> $profitPerNightList
+     * @param non-empty-list<float> $profitPerNightList
      *
      * @return list<float>
      */
     private static function getStats(array $profitPerNightList): array
     {
-        // @TODO handle division by zero
-
         return [
             round(array_sum($profitPerNightList) / count($profitPerNightList), 2),
             min($profitPerNightList),

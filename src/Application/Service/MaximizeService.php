@@ -38,8 +38,14 @@ final readonly class MaximizeService
         return $this->createMaximizeQuery($maxProfitCombination);
     }
 
+    /**
+     * @param list<list<BookingRequest>> $validCombinations
+     *
+     * @return list<BookingRequest>
+     */
     private function getMaxProfitCombination(array $validCombinations): array
     {
+        /** @var non-empty-list<BookingRequest> $totalProfitPerCombinationList */
         $totalProfitPerCombinationList = array_map(
             fn (array $combination) => array_sum(array_map(
                 fn(BookingRequest $bookingRequest) => $this->profitCalculator->calculateTotalProfit($combination),
@@ -53,6 +59,9 @@ final readonly class MaximizeService
         return $validCombinations[$maxProfitKey] ?? [];
     }
 
+    /**
+     * @param list<BookingRequest> $maxProfitCombination
+     */
     private function createMaximizeQuery(array $maxProfitCombination): MaximizeQuery
     {
         $requestIds = array_map(

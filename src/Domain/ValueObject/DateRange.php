@@ -12,7 +12,7 @@ final readonly class DateRange
         string $checkIn,
         public int $nights
     ) {
-        $this->checkIn = \DateTimeImmutable::createFromFormat('Y-m-d', $checkIn);
+        $this->checkIn = \DateTimeImmutable::createFromFormat('Y-m-d', $checkIn) ?: throw new \InvalidArgumentException("Invalid check-in date format: {$checkIn}");
         $this->checkOut = $this->checkIn->add(new \DateInterval("P{$this->nights}D"));
     }
 

@@ -17,6 +17,9 @@ final readonly class StatsController
     {
     }
 
+    /**
+     * @param list<BookingRequestDto> $bookingRequestList
+     */
     #[Route('/stats', methods: ['POST'], format: 'json')]
     public function __invoke(
         #[MapRequestPayload(type: BookingRequestDto::class)]

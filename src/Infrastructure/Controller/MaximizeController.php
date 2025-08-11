@@ -18,6 +18,9 @@ final readonly class MaximizeController
     {
     }
 
+    /**
+     * @param list<BookingRequestDto> $bookingRequestList
+     */
     #[Route('/maximize', methods: ['POST'], format: 'json')]
     public function __invoke(
         #[MapRequestPayload(type: BookingRequestDto::class)]

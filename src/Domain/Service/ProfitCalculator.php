@@ -25,6 +25,7 @@ final readonly class ProfitCalculator
      */
     public function calculateProfitMetrics(array $bookingRequestList): array
     {
+        /** @var non-empty-list<float> $profitsPerNightList */
         $profitsPerNightList = array_map(
             fn(BookingRequest $bookingRequest) => $bookingRequest->calculateProfitPerNight()->amount,
             $bookingRequestList
