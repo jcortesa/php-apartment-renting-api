@@ -2,18 +2,25 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Acceptance\Infrastructure\Controller;
+namespace App\Tests\Unit\Infrastructure\Controller;
 
+use App\Application\Service\MaximizeService;
+use App\Domain\Service\BookingsCombinator;
+use App\Domain\Service\ProfitCalculator;
 use App\Infrastructure\Controller\MaximizeController;
 use PHPUnit\Framework\Attributes\CoversClass;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\Request;
 
 #[CoversClass(MaximizeController::class)]
-final class MaximizeControllerTest extends WebTestCase
+final class MaximizeControllerTest extends TestCase
 {
-    public function testMaximizeEndpoint(): void
+    public function testWhenInvokeThenReturnProperResponse(): void
     {
-        $client = static::createClient();
+        $profitCalculator = new ProfitCalculator();
+        $bookingsCombinator = new BookingsCombinator();
+        $maximizeService = new MaximizeService($profitCalculator, $bookingsCombinator);
+        $controller = new MaximizeController($maximizeService);
         $content = json_encode([
             [
                 'request_id' => 'bookata_XY123',
@@ -44,7 +51,7 @@ final class MaximizeControllerTest extends WebTestCase
                 'margin' => 30
             ]
         ], JSON_THROW_ON_ERROR);
-        $expectedResult = json_encode([
+        $expectedResponse = json_encode([
             'request_ids' => [
                 'acme_AAAAA',
                 'bookata_XY123',
@@ -54,9 +61,11 @@ final class MaximizeControllerTest extends WebTestCase
             'min_night' => 8,
             'max_night' => 12,
         ], JSON_THROW_ON_ERROR);
+        $request = new Request(content: $content);
 
-        $client->request('POST', '/maximize', content: $content);
+        $response = $controller->__invoke($request);
 
-        self::assertSame($expectedResult, $client->getResponse()->getContent());
+        self::assertSame($expectedResponse, $response->getContent());
     }
+
 }

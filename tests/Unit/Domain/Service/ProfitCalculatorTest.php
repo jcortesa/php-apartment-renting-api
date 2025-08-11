@@ -8,8 +8,10 @@ use App\Domain\Entity\BookingRequest;
 use App\Domain\Service\ProfitCalculator;
 use App\Domain\ValueObject\DateRange;
 use App\Domain\ValueObject\Money;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
+#[CoversClass(ProfitCalculator::class)]
 final class ProfitCalculatorTest extends TestCase
 {
     public function testWhenCalculateTotalProfitThenReturnsExpectedTotalProfit(): void

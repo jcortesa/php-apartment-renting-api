@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Acceptance\Infrastructure\Controller;
 
+use App\Infrastructure\Controller\StatsController;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
+#[CoversClass(StatsController::class)]
 final class StatsControllerTest extends WebTestCase
 {
     #[DataProvider('provideStatsEndpointCases')]
