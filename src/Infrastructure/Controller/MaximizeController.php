@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Controller;
+namespace App\Infrastructure\Controller;
 
 use Symfony\Component\Routing\Attribute\Route;
 
