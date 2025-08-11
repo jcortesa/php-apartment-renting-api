@@ -6,8 +6,9 @@ help:
 	@echo "  ▶️  up              - Start the containers in detached mode"
 	@echo "  ⏹️  down            - Stop and remove the containers"
 	@echo "  🖥️  bash            - Open a bash shell in the backend container"
-	@echo "  🧪  test-unit       - Run unit tests in the backend container"
-	@echo "  🧪  test-acceptance - Run acceptance tests in the backend container"
+	@echo "  📊  coverage-test   - Run tests and generate a coverage report"
+	@echo "  🧪  unit-test       - Run unit tests in the backend container"
+	@echo "  🧪  acceptance-test - Run acceptance tests in the backend container"
 
 .PHONY: build up down bash
 
@@ -23,8 +24,11 @@ down:
 bash:
 	docker exec -ti $(BACKEND_CONTAINER) bash
 
-test-unit:
-	docker exec -it $(BACKEND_CONTAINER) php bin/phpunit
+coverage-test:
+	docker exec -it $(BACKEND_CONTAINER) php bin/phpunit --testsuite "Project Unit Test Suite" --coverage-html build/coverage --coverage-text
 
-test-acceptance:
-	docker exec -it $(BACKEND_CONTAINER) php bin/phpunit --group=acceptance
+unit-test:
+	docker exec -it $(BACKEND_CONTAINER) php bin/phpunit --testsuite "Project Unit Test Suite"
+
+acceptance-test:
+	docker exec -it $(BACKEND_CONTAINER) php bin/phpunit --testsuite "Project Acceptance Test Suite"
