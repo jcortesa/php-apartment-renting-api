@@ -40,6 +40,8 @@ final class StatsService
      */
     private static function getStats(array $profitPerNightList): array
     {
+        // @TODO handle division by zero
+
         return [
             round(array_sum($profitPerNightList) / count($profitPerNightList), 2),
             min($profitPerNightList),
