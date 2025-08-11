@@ -8,7 +8,7 @@ GET http://localhost:8000
 %}
 
 ### Check /stats endpoint
-GET http://localhost:8000/stats
+POST http://localhost:8000/stats
 Accept: Application/json
 
 [
@@ -41,7 +41,7 @@ Accept: Application/json
 %}
 
 ### Check /stats endpoint with another data set
-GET http://localhost:8000/stats
+POST http://localhost:8000/stats
 Accept: Application/json
 
 [
@@ -81,7 +81,7 @@ Accept: Application/json
 %}
 
 ### Check /maximize endpoint
-GET http://localhost:8000/maximize
+POST http://localhost:8000/maximize
 Accept: Application/json
 
 [
