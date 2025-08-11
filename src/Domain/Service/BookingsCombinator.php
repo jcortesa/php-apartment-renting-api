@@ -28,22 +28,16 @@ final readonly class BookingsCombinator
      */
     private function visitCombination(array $combination): ?array
     {
-        $combinationCheckData = [];
+        $alreadyCheckedBookings = [];
 
         foreach ($combination as $bookingRequest) {
-            $currentCheckIn = \DateTimeImmutable::createFromFormat('Y-m-d', $bookingRequest->checkIn);
-            $currentCheckOut = $currentCheckIn->add(new \DateInterval('P' . $bookingRequest->nights . 'D'));
-
-            foreach ($combinationCheckData as ['check_in_date' => $checkIn, 'check_out_date' => $checkOut]) {
-                if ($currentCheckIn < $checkOut && $currentCheckOut > $checkIn) {
+            foreach ($alreadyCheckedBookings as $alreadyCheckedBookingRequest) {
+                if ($bookingRequest->dateRange->overlaps($alreadyCheckedBookingRequest->dateRange)) {
                     return null;
                 }
             }
 
-            $combinationCheckData[] = [
-                'check_in_date' => $currentCheckIn,
-                'check_out_date' => $currentCheckOut,
-            ];
+            $alreadyCheckedBookings[] = $bookingRequest;
         }
 
         return $combination;

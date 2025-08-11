@@ -7,6 +7,8 @@ namespace App\Application\Service;
 use App\Application\Command\StatsCommand;
 use App\Application\Query\StatsQuery;
 use App\Domain\Entity\BookingRequest;
+use App\Domain\ValueObject\DateRange;
+use App\Domain\ValueObject\Money;
 
 final class StatsService
 {
@@ -15,15 +17,14 @@ final class StatsService
         /** @var list<BookingRequest> $bookingRequestList */
         $bookingRequestList = array_map(static fn($data) => new BookingRequest(
             $data['request_id'],
-            $data['check_in'],
-            $data['nights'],
-            $data['selling_rate'],
+            new DateRange($data['check_in'], $data['nights']),
+            new Money($data['selling_rate']),
             $data['margin']
         ), $statsRequest->data);
 
         /** @var list<float> $profitPerNightList */
         $profitPerNightList = array_map(
-            static fn(BookingRequest $bookingRequest) => self::calculateProfitPerNight($bookingRequest->sellingRate, $bookingRequest->margin, $bookingRequest->nights),
+            static fn(BookingRequest $bookingRequest) => $bookingRequest->calculateProfitPerNight()->amount,
             $bookingRequestList
         );
 
@@ -32,13 +33,9 @@ final class StatsService
         return new StatsQuery($average, $minimum, $maximum);
     }
 
-    private static function calculateProfitPerNight(int $sellingRate, int $margin, int $nights): float
-    {
-        return ($sellingRate * ($margin / 100)) / $nights;
-    }
-
     /**
      * @param list<float> $profitPerNightList
+     *
      * @return list<float>
      */
     private static function getStats(array $profitPerNightList): array

@@ -6,26 +6,18 @@ namespace App\Tests\Unit\Domain\Service;
 
 use App\Domain\Entity\BookingRequest;
 use App\Domain\Service\ProfitCalculator;
+use App\Domain\ValueObject\DateRange;
+use App\Domain\ValueObject\Money;
 use PHPUnit\Framework\TestCase;
 
 final class ProfitCalculatorTest extends TestCase
 {
-    public function testWhenCalculateProfitPerNightThenReturnsExpectedProfit(): void
-    {
-        $profitCalculator = new ProfitCalculator();
-        $bookingRequest = new BookingRequest('request-id', '2023-10-01', 5, 1000, 20);
-
-        $profitPerNight = $profitCalculator->calculateProfitPerNight($bookingRequest);
-
-        $this->assertEquals(40, $profitPerNight);
-    }
-
     public function testWhenCalculateTotalProfitThenReturnsExpectedTotalProfit(): void
     {
         $profitCalculator = new ProfitCalculator();
         $bookingRequestList = [
-            new BookingRequest('request-id-1', '2023-10-01', 5, 1000, 20),
-            new BookingRequest('request-id-2', '2023-10-20', 3, 1500, 15),
+            new BookingRequest('request-id-1', new DateRange('2023-10-01', 5), new Money(1000), 20),
+            new BookingRequest('request-id-2', new DateRange('2023-10-20', 3), new Money(1500), 15),
         ];
 
         $totalProfit = $profitCalculator->calculateTotalProfit($bookingRequestList);
@@ -37,9 +29,9 @@ final class ProfitCalculatorTest extends TestCase
     {
         $profitCalculator = new ProfitCalculator();
         $bookingRequestList = [
-            new BookingRequest('request-id-1', '2023-10-01', 5, 1000, 20),
-            new BookingRequest('request-id-2', '2023-10-20', 3, 1500, 15),
-            new BookingRequest('request-id-3', '2023-10-25', 2, 800, 10),
+            new BookingRequest('request-id-1', new DateRange('2023-10-01', 5), new Money(1000), 20),
+            new BookingRequest('request-id-2', new DateRange('2023-10-20', 3), new Money(1500), 15),
+            new BookingRequest('request-id-3', new DateRange('2023-10-25', 2), new Money(800), 10),
         ];
 
         $metrics = $profitCalculator->calculateProfitMetrics($bookingRequestList);

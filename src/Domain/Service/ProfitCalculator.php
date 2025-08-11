@@ -8,19 +8,13 @@ use App\Domain\Entity\BookingRequest;
 
 final readonly class ProfitCalculator
 {
-    public function calculateProfitPerNight(BookingRequest $bookingRequest): float
-    {
-        // @TODO check for possible errors
-        return ($bookingRequest->sellingRate * ($bookingRequest->margin / 100)) / $bookingRequest->nights;
-    }
-
     /**
      * @param list<BookingRequest> $bookingRequestList
      */
     public function calculateTotalProfit(array $bookingRequestList): float
     {
         return array_reduce($bookingRequestList, static function (float $carry, BookingRequest $bookingRequest) {
-            return $carry + ($bookingRequest->sellingRate * ($bookingRequest->margin / 100));
+            return $carry + ($bookingRequest->sellingRate->amount * ($bookingRequest->margin / 100));
         }, 0.0);
     }
 
@@ -32,7 +26,7 @@ final readonly class ProfitCalculator
     public function calculateProfitMetrics(array $bookingRequestList): array
     {
         $profitsPerNightList = array_map(
-            fn(BookingRequest $bookingRequest) => $this->calculateProfitPerNight($bookingRequest),
+            fn(BookingRequest $bookingRequest) => $bookingRequest->calculateProfitPerNight()->amount,
             $bookingRequestList
         );
 

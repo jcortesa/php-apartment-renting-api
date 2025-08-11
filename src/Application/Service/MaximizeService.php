@@ -9,6 +9,8 @@ use App\Application\Query\MaximizeQuery;
 use App\Domain\Entity\BookingRequest;
 use App\Domain\Service\BookingsCombinator;
 use App\Domain\Service\ProfitCalculator;
+use App\Domain\ValueObject\DateRange;
+use App\Domain\ValueObject\Money;
 
 final readonly class MaximizeService
 {
@@ -24,9 +26,8 @@ final readonly class MaximizeService
         /** @var list<BookingRequest> $bookingRequestList */
         $bookingRequestList = array_map(static fn($data) => new BookingRequest(
             $data['request_id'],
-            $data['check_in'],
-            $data['nights'],
-            $data['selling_rate'],
+            new DateRange($data['check_in'], $data['nights']),
+            new Money($data['selling_rate']),
             $data['margin']
         ), $maximizeCommand->data);
 
@@ -59,7 +60,7 @@ final readonly class MaximizeService
         );
 
         $totalProfit = array_sum(array_map(
-            static fn(BookingRequest $bookingRequest) => $bookingRequest->sellingRate * ($bookingRequest->margin / 100),
+            static fn(BookingRequest $bookingRequest) => $bookingRequest->calculateProfit()->amount,
             $maxProfitCombination
         ));
 
