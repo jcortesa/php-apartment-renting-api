@@ -7,9 +7,14 @@ namespace App\Application\Service;
 use App\Application\Command\MaximizeCommand;
 use App\Application\Query\MaximizeQuery;
 use App\Domain\Entity\BookingRequest;
+use App\Domain\Service\ProfitCalculator;
 
 final readonly class MaximizeService
 {
+    public function __construct(private ProfitCalculator $profitCalculator)
+    {
+    }
+
     public function run(MaximizeCommand $maximizeRequest): MaximizeQuery
     {
         /** @var list<BookingRequest> $bookingRequestList */
@@ -21,60 +26,21 @@ final readonly class MaximizeService
             $data['margin']
         ), $maximizeRequest->data);
 
-        $combinations = self::getArrayCombinations($bookingRequestList);
-        $validCombinations = self::getValidCombinations($combinations);
+        $validCombinations = $this->getValidCombinations($bookingRequestList);
+        $maxProfitCombination = $this->getMaxProfitCombination($validCombinations);
 
-        $maxProfitCombination = self::getMaxProfitCombination($validCombinations);
-
-        return self::createMaximizeResponse($maxProfitCombination);
-    }
-
-    private static function calculateProfitPerNight(int $sellingRate, int $margin, int $nights): float
-    {
-        return ($sellingRate * ($margin / 100)) / $nights;
-    }
-
-    private static function calculateTotalProfit(array $bookingRequestList): float
-    {
-        return array_reduce($bookingRequestList, static function (float $carry, BookingRequest $bookingRequest) {
-            return $carry + $bookingRequest->sellingRate * $bookingRequest->margin;
-        }, 0.0);
+        return $this->createMaximizeQuery($maxProfitCombination);
     }
 
     /**
      * @param list<BookingRequest> $bookingRequestList
      *
-     * @return list<float>
+     * @return list<list<BookingRequest>>
      */
-    private static function getMaximizeData(array $bookingRequestList): array
+    private function getValidCombinations(array $bookingRequestList): array
     {
-        $profitsPerNightList = array_map(
-            static fn(BookingRequest $bookingRequest) => self::calculateProfitPerNight($bookingRequest->sellingRate, $bookingRequest->margin, $bookingRequest->nights),
-            $bookingRequestList
-        );
+        $combinations = $this->getArrayCombinations($bookingRequestList);
 
-        return [
-            round(array_sum($profitsPerNightList) / count($profitsPerNightList), 2),
-            min($profitsPerNightList),
-            max($profitsPerNightList),
-        ];
-    }
-
-    private static function getArrayCombinations($array): array
-    {
-        $results = [[]];
-
-        foreach ($array as $element) {
-            foreach ($results as $combination) {
-                $results[] = array_merge([$element], $combination);
-            }
-        }
-
-        return $results;
-    }
-
-    private static function getValidCombinations(array $combinations): array
-    {
         $validCombinations = [];
 
         foreach ($combinations as $combination) {
@@ -116,11 +82,24 @@ final readonly class MaximizeService
         return $validCombinations;
     }
 
-    private static function getMaxProfitCombination(array $validCombinations): array
+    private function getArrayCombinations($array): array
+    {
+        $results = [[]];
+
+        foreach ($array as $element) {
+            foreach ($results as $combination) {
+                $results[] = array_merge([$element], $combination);
+            }
+        }
+
+        return $results;
+    }
+
+    private function getMaxProfitCombination(array $validCombinations): array
     {
         $profitPerCombinationList = array_map(
-            static fn(array $combination) => array_sum(array_map(
-                static fn(BookingRequest $bookingRequest) => self::calculateTotalProfit($combination),
+            fn(array $combination) => array_sum(array_map(
+                fn(BookingRequest $bookingRequest) => $this->profitCalculator->calculateTotalProfit($combination),
                 $combination
             )),
             $validCombinations
@@ -131,7 +110,7 @@ final readonly class MaximizeService
         return $validCombinations[$maxProfitKey] ?? [];
     }
 
-    private static function createMaximizeResponse(array $maxProfitCombination): MaximizeQuery
+    private function createMaximizeQuery(array $maxProfitCombination): MaximizeQuery
     {
         $requestIds = array_map(
             static fn(BookingRequest $bookingRequest) => $bookingRequest->requestId,
@@ -143,7 +122,7 @@ final readonly class MaximizeService
             $maxProfitCombination
         ));
 
-        [$average, $minimum, $maximum] = self::getMaximizeData($maxProfitCombination);
+        [$average, $minimum, $maximum] = $this->profitCalculator->calculateProfitMetrics($maxProfitCombination);
 
         return new MaximizeQuery($requestIds, $totalProfit, $average, $minimum, $maximum);
     }
