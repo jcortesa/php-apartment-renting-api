@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Model;
 
-final readonly class StatsRequest
+final readonly class MaximizeRequest
 {
     /**
      * @param list<array{
