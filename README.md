@@ -60,20 +60,20 @@ Request Example:
 
 ```json
 [
-  {
-    "request_id": "bookata_XY123",
-    "check_in": "2020-01-01",
-    "nights": 5,
-    "selling_rate": 200,
-    "margin": 20
-  },
-  {
-    "request_id": "kayete_PP234",
-    "check_in": "2020-01-04",
-    "nights": 4,
-    "selling_rate": 156,
-    "margin": 22
-  }
+    {
+        "request_id": "bookata_XY123",
+        "check_in": "2020-01-01",
+        "nights": 5,
+        "selling_rate": 200,
+        "margin": 20
+    },
+    {
+        "request_id": "kayete_PP234",
+        "check_in": "2020-01-04",
+        "nights": 4,
+        "selling_rate": 156,
+        "margin": 22
+    }
 ]
 ```
 
@@ -95,20 +95,20 @@ Request Example:
 
 ```json
 [
-  {
-    "request_id": "bookata_XY123",
-    "check_in": "2020-01-01",
-    "nights": 5,
-    "selling_rate": 200,
-    "margin": 20
-  },
-  {
-    "request_id": "acme_AAAAA",
-    "check_in": "2020-01-10",
-    "nights": 4,
-    "selling_rate": 160,
-    "margin": 30
-  }
+    {
+        "request_id": "bookata_XY123",
+        "check_in": "2020-01-01",
+        "nights": 5,
+        "selling_rate": 200,
+        "margin": 20
+    },
+    {
+        "request_id": "acme_AAAAA",
+        "check_in": "2020-01-10",
+        "nights": 4,
+        "selling_rate": 160,
+        "margin": 30
+    }
 ]
 ```
 
