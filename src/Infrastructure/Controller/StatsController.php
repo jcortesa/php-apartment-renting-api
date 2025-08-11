@@ -33,8 +33,10 @@ final readonly class StatsController
         $statsRequest = new StatsRequest($data);
         $statsResponse = $this->statsService->run($statsRequest);
 
-        // @TODO return the result as proper stats response
-
-        return new JsonResponse([]);
+        return new JsonResponse([
+            'avg_night' => $statsResponse->average,
+            'min_night' => $statsResponse->minimum,
+            'max_night' => $statsResponse->maximum,
+        ]);
     }
 }
